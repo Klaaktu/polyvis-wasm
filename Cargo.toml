@@ -1,0 +1,15 @@
+[package]
+name = "polyvis-wasm-wrapper"
+version = "0.1.0"
+authors = ["zyan0096@student.monash.edu"]
+description = "A GeoRust wrapper for my homework"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/Klaaktu/my-georust-wasm-wrapper"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = ">= 0.2.100"
+geo = ">= 0.30.0"
