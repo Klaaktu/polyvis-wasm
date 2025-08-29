@@ -9,3 +9,6 @@ The original plan was to use [iShape-js](https://github.com/iShape-Rust/iShape-j
 However, it doesn't seem that GeoRust can be compiled directly to wasm, instead you need to use it in your project and compile your project to wasm instead, even though I only need functions that are already available.
 
 Further reading: https://kylebarron.dev/blog/geos-wasm (p.s. [GEOS](https://libgeos.org/) says it's a port of JTS, not the other way around.)
+
+## Considerations
+Avoid passing a lot of data between JS and WASM, serializing is slow. May need to keep 2 copies of the polygon list.
