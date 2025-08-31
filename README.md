@@ -3,6 +3,11 @@
 ## Build
 `wasm-pack build --target web`
 
+## How to use
+```
+// Call initialize() in JS
+```
+
 ## Rationale
 The original plan was to use [iShape-js](https://github.com/iShape-Rust/iShape-js), a wasm build of [iOverlay](https://github.com/iShape-Rust/iOverlay) in a Javascript web app. However, iOverlay doesn't have all the features we need, e.g. calculate area, convex check. So I switched to GeoRust, which uses iOverlay as a dependency.
 
@@ -11,4 +16,8 @@ However, it doesn't seem that GeoRust can be compiled directly to wasm, instead 
 Further reading: https://kylebarron.dev/blog/geos-wasm (p.s. [GEOS](https://libgeos.org/) says it's a port of JTS, not the other way around.)
 
 ## Considerations
-Avoid passing a lot of data between JS and WASM, serializing is slow. May need to keep 2 copies of the polygon list.
+Avoid passing a lot of data between JS and WASM, because [it's slow](https://rustwasm.github.io/docs/book/game-of-life/implementing.html#interfacing-rust-and-javascript). May need to keep 2 copies of the polygon list.
+
+## To do
+1. Use WASM's linear memory in JS?
+2. Import JS functions to Rust to avoid data copy?
