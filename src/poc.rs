@@ -37,11 +37,20 @@ Vec<Vec<[f64; 2]>> 2 layers of dynamic length. Has to use Serde.
 // pub struct Point2D(Coord<f64>);
 // pub struct Point2D([f64; 2]);
 
-// TODO: Put polygons in WASM shared memory for export support? Serde for JSON?
-
 // Working: .map(|s| s.try_into().expect(""))
 // Not working: .map(|s| s.into()) trait not implemented.
 
 // Limitation: github.com/wasm-bindgen/wasm-bindgen/issues/1187
 // Result<Self, &'static str>
 // return Err("Shape is not convex!");
+
+// Does not work, .reduce() type signature limits acc to be the same as p.
+// let intersect: f64 = polygons
+//     .reduce(|acc, p| &(acc.intersection(p)))
+//     .map(|p| p.unsigned_area())
+//     .unwrap_or(0.0);
+
+/* TODO!
+ * Put polygons in WASM shared memory for export support? Serde for JSON?
+ * Check iou with empty list.
+ */
