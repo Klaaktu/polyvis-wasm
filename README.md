@@ -5,7 +5,7 @@
 
 ## How to use
 ```
-// Call initialize() in JS
+// Call new_session() in JS
 ```
 
 ## Rationale
@@ -19,5 +19,8 @@ Further reading: https://kylebarron.dev/blog/geos-wasm (p.s. [GEOS](https://libg
 Avoid passing a lot of data between JS and WASM, because [it's slow](https://rustwasm.github.io/docs/book/game-of-life/implementing.html#interfacing-rust-and-javascript). May need to keep 2 copies of the polygon list.
 
 ## To do
-1. Use WASM's linear memory in JS?
-2. Import JS functions to Rust to avoid data copy?
+- [ ] Use WASM's linear memory in JS?
+- [ ] Import JS functions to Rust to avoid data copy?
+- [ ] Test edge cases: empty list to iou()
+- [ ] Dependabot
+- [ ] Can JS handle NaN (div by 0 in float)?

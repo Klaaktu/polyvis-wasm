@@ -19,6 +19,14 @@ pub fn is_convex(points: Vec<f64>) -> bool {
     return line.is_convex();
 }
 
+let intersection: f64 = polygons
+    .clone()
+    .cloned()
+    .map(|p| MultiPolygon::new(vec![p]))
+    .reduce(|acc, p| acc.intersection(&p))
+    .map(|p| p.unsigned_area())
+    .unwrap_or(0.0);
+
 // #[wasm_bindgen]
 // pub fn iou(polygons: Vec<Vec<[f64; 2]>>) -> f64 {
 //     // eh will be very gross
@@ -49,8 +57,3 @@ Vec<Vec<[f64; 2]>> 2 layers of dynamic length. Has to use Serde.
 //     .reduce(|acc, p| &(acc.intersection(p)))
 //     .map(|p| p.unsigned_area())
 //     .unwrap_or(0.0);
-
-/* TODO!
- * Put polygons in WASM shared memory for export support? Serde for JSON?
- * Check iou with empty list.
- */
