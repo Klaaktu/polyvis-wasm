@@ -8,6 +8,9 @@
 // Call new_session() in JS
 ```
 
+## Notes
+Importing YAML save is not supported, due to [lack](https://github.com/acatton/serde-yaml-ng?tab=readme-ov-file#update-july-2025) of a maintained & popular YAML library. Export is supported (YAML is more human-readable).
+
 ## Rationale
 The original plan was to use [iShape-js](https://github.com/iShape-Rust/iShape-js), a wasm build of [iOverlay](https://github.com/iShape-Rust/iOverlay) in a Javascript web app. However, iOverlay doesn't have all the features we need, e.g. calculate area, convex check. So I switched to GeoRust, which uses iOverlay as a dependency.
 
@@ -24,3 +27,4 @@ Avoid passing a lot of data between JS and WASM, because [it's slow](https://rus
 - [ ] Test edge cases: empty list to iou()
 - [ ] Dependabot
 - [ ] Can JS handle NaN (div by 0 in float)?
+- [ ] Put the export function in JS instead, except the serialization. I don't like all the explicit error propagating. Those errors likely won't be fatal in JS anyway.

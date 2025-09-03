@@ -1,5 +1,7 @@
 use geo::{LineString, Polygon};
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize)]
 pub struct PolygonData {
     pub polygon: Polygon,
     pub color: u32, // Web Color is max 32 bit

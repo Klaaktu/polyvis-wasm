@@ -1,9 +1,11 @@
 use crate::polygon::PolygonData;
-use geo::{Area, BooleanOps, IsConvex, LineString, MultiPolygon, unary_union};
+use geo::{unary_union, Area, BooleanOps, IsConvex, LineString, MultiPolygon};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
+#[derive(Serialize, Deserialize)]
 pub struct Instance {
     data: HashMap<u64, PolygonData>,
     counter: u64, // Used for hash map key, not actual count of items!
