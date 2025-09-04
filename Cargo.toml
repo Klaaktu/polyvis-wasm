@@ -1,10 +1,10 @@
 [package]
-name = "polyvis-wasm-wrapper"
+name = "polyvis-wasm"
 version = "0.1.0"
 authors = ["zyan0096@student.monash.edu"]
-description = "A GeoRust wrapper for my homework"
+description = "For homework, a WASM backend based on GeoRust."
 license = "GPL-3.0-or-later"
-repository = "https://github.com/Klaaktu/my-georust-wasm-wrapper"
+repository = "https://github.com/Klaaktu/polyvis-wasm"
 edition = "2024"
 
 [lib]
