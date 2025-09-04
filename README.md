@@ -29,3 +29,4 @@ Avoid passing a lot of data between JS and WASM, because [it's slow](https://rus
 - [ ] Can JS handle NaN (div by 0 in float)?
 - [ ] Put the export function in JS instead, except the serialization. I don't like all the explicit error propagating. Those errors likely won't be fatal in JS anyway.
 - [ ] Multi-threading?
+- [ ] Graph data structure for intersections between pairs.
