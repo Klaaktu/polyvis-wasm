@@ -50,3 +50,5 @@ jobs:
           git push --tags --force
       - name: Refresh release file
         run: gh release upload nightly ${{ env.OUTPUT }} --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
