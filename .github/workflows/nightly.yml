@@ -1,0 +1,52 @@
+name: Nightly release
+
+env:
+  OUTPUT: polyvis-wasm.7z
+
+on:
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN
+permissions:
+  contents: write
+
+# Allow only one concurrent deployment, skipping runs except the latest.
+concurrency:
+  group: "nightly"
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rust cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/.crates.toml
+            ~/.cargo/.crates2.json
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            polyvis-wasm/pkg/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Install wasm-pack
+        run: curl https://drager.github.io/wasm-pack/installer/init.sh -sSf | bash
+      - name: Build
+        run: wasm-pack build --target web
+      - name: Archive
+        run: 7z a -mx=9 ${{ env.OUTPUT }} "./pkg"
+      # A GitHub release must have a tag
+      - name: Move/Create "nightly" tag
+        run: |
+          git tag --force nightly ${{ github.sha }}
+          git push --tags --force
+      - name: Refresh release file
+        run: gh release upload nightly ${{ env.OUTPUT }} --clobber
