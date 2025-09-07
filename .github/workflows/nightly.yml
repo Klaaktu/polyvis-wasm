@@ -52,7 +52,7 @@ jobs:
       - name: Refresh release file
         run: gh release upload nightly ${{ env.OUTPUT }} --clobber
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
       - name: Checkout "pkg" branch
         uses: actions/checkout@v5
         with:
@@ -63,7 +63,8 @@ jobs:
           cp -a pkg/. pkg-branch/
           cd pkg-branch/
           rm .gitignore
+          git add -A
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "Auto update build artifacts"
+          git commit -m "Auto update build artifacts"
           git push
