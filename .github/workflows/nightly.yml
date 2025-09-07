@@ -24,6 +24,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v5
       - name: Rust cache
         uses: actions/cache@v4
         with:
@@ -37,8 +39,6 @@ jobs:
             target/
             pkg/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Checkout
-        uses: actions/checkout@v5
       - name: Install wasm-pack
         run: curl https://drager.github.io/wasm-pack/installer/init.sh -sSf | bash
       - name: Build
