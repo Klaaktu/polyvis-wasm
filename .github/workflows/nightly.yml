@@ -1,4 +1,5 @@
 name: Nightly release
+# Publish to both GitHub releases and the pkg branch (Deno cannot import a zip).
 
 env:
   OUTPUT: polyvis-wasm.7z
@@ -52,3 +53,15 @@ jobs:
         run: gh release upload nightly ${{ env.OUTPUT }} --clobber
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: Checkout "pkg" branch
+        uses: actions/checkout@v5
+        with:
+          ref: pkg
+          path: pkg-branch
+      - name: Update pkg branch
+        run: |
+          cp -a pkg/. pkg-branch/
+          cd pkg-branch/
+          rm .gitignore
+          git commit -am "Automated update"
+          git push
