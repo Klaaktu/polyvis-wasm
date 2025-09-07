@@ -1,0 +1,16 @@
+/* tslint:disable */
+/* eslint-disable */
+export const memory: WebAssembly.Memory;
+export const __wbg_instance_free: (a: number, b: number) => void;
+export const instance_new: () => number;
+export const instance_add_polygon: (a: number, b: number, c: number, d: number, e: number) => [bigint, number, number];
+export const instance_iou: (a: number, b: number, c: number) => [number, number, number];
+export const new_session: () => number;
+export const serialize_session: (a: number, b: number) => [number, number, number, number];
+export const import_session: (a: number, b: number) => [number, number, number];
+export const __wbindgen_export_0: WebAssembly.Table;
+export const __wbindgen_malloc: (a: number, b: number) => number;
+export const __externref_table_dealloc: (a: number) => void;
+export const __wbindgen_free: (a: number, b: number, c: number) => void;
+export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+export const __wbindgen_start: () => void;
