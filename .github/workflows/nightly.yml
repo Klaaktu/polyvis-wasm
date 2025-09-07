@@ -42,6 +42,9 @@ jobs:
         run: curl https://drager.github.io/wasm-pack/installer/init.sh -sSf | bash
       - name: Build
         run: wasm-pack build --target web
+      # https://github.com/drager/wasm-pack/issues/1502
+      - name: Add Deno type declaration
+        run: sed -i '1i// @ts-self-types="./polyvis-wasm.d.ts"' polyvis-wasm.js
       - name: Archive
         run: 7z a -mx=9 ${{ env.OUTPUT }} "./pkg"
       # A GitHub release must have a tag
