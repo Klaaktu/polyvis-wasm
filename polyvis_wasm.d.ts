@@ -1,7 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export function new_session(): Instance;
-export function serialize_session(session: Instance, format: TextFormat): string;
 export function import_session(text: string): Instance;
 export enum TextFormat {
   JSON = 0,
@@ -12,6 +11,7 @@ export class Instance {
   constructor();
   add_polygon(points: Float64Array, color: number, selected: boolean): bigint;
   iou(ids: BigUint64Array): number;
+  serialize(format: TextFormat): string;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -22,8 +22,8 @@ export interface InitOutput {
   readonly instance_new: () => number;
   readonly instance_add_polygon: (a: number, b: number, c: number, d: number, e: number) => [bigint, number, number];
   readonly instance_iou: (a: number, b: number, c: number) => [number, number, number];
+  readonly instance_serialize: (a: number, b: number) => [number, number, number, number];
   readonly new_session: () => number;
-  readonly serialize_session: (a: number, b: number) => [number, number, number, number];
   readonly import_session: (a: number, b: number) => [number, number, number];
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
