@@ -1,5 +1,5 @@
 use crate::polygon::PolygonData;
-use geo::{unary_union, Area, BooleanOps, IsConvex, LineString, MultiPolygon};
+use geo::{Area, IsConvex, LineString};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
@@ -9,6 +9,12 @@ use wasm_bindgen::prelude::*;
 pub struct Instance {
     data: HashMap<u64, PolygonData>,
     counter: u64, // Used for hash map key, not actual count of items!
+}
+
+#[wasm_bindgen]
+pub enum TextFormat {
+    JSON,
+    YAML,
 }
 
 #[wasm_bindgen]
@@ -37,25 +43,38 @@ impl Instance {
         return Ok(self.counter);
     }
 
+    // Some fail conditions:
+    // Passed id is empty - caller weird
+    // filter_map is empty - caller has bad ids
+    // union is 0, causes NaN - bad stored data
     pub fn iou(&self, ids: Vec<u64>) -> Result<f64, String> {
-        let polygons = ids
-            .iter()
-            .filter_map(|id| self.data.get(id))
-            .map(|poly_data| &poly_data.polygon);
-        let mut iter_clone = polygons.clone();
-
-        // Intersection has no similar unary function
-        let mut intersection = match iter_clone.next() {
-            None => return Err("Polygon data not found!".into()),
-            Some(pointer) => MultiPolygon::new(vec![pointer.clone()]),
+        if ids.is_empty() {
+            return Err("Called IoU with empty list!".into());
         };
-        intersection = iter_clone.fold(intersection, |acc, p| acc.intersection(p));
-        let intersection = intersection.unsigned_area();
 
-        let union = unary_union(polygons).unsigned_area();
+        // peekable needs mut
+        let polygons = ids.iter().filter_map(|id| self.data.get(id));
+        let mut polygons2 = polygons.clone().peekable();
 
-        // Division by 0 in float returns NaN.
+        if polygons2.peek().is_none() {
+            return Err("IDs not found in database! Caller may contain bugs.".into());
+        }
+
+        let intersection = PolygonData::unary_intersection(polygons).unsigned_area();
+        let union = PolygonData::unary_union(polygons2).unsigned_area();
+
+        if union == 0.0 {
+            return Err("Division by 0! Bad polygon area.".into());
+        }
+
         return Ok(intersection / union);
+    }
+
+    pub fn serialize(&self, format: TextFormat) -> Result<String, String> {
+        return match format {
+            TextFormat::JSON => serde_json::to_string(self).map_err(|e| e.to_string()),
+            TextFormat::YAML => serde_yaml_ng::to_string(self).map_err(|e| e.to_string()),
+        };
     }
 }
 
