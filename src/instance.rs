@@ -1,7 +1,7 @@
-use crate::polygon::PolygonData;
+use crate::{Coord2D, polygon::PolygonData};
 use geo::{Area, IsConvex, LineString};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, vec};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -27,17 +27,12 @@ impl Instance {
         };
     }
 
-    pub fn add_polygon(
-        &mut self,
-        points: Vec<f64>,
-        color: u32,
-        selected: bool,
-    ) -> Result<u64, String> {
+    pub fn add_polygon(&mut self, points: Vec<f64>, color: u32) -> Result<u64, String> {
         let ext_line = LineString::from(points.as_chunks::<2>().0.to_vec());
         if !ext_line.is_convex() {
             return Err("Shape is not convex!".into());
         }
-        let p = PolygonData::new(ext_line, color, selected);
+        let p = PolygonData::new(ext_line, color);
         self.counter += 1;
         self.data.insert(self.counter, p);
         return Ok(self.counter);
@@ -48,12 +43,8 @@ impl Instance {
     // filter_map is empty - caller has bad ids
     // union is 0, causes NaN - bad stored data
     pub fn iou(&self, ids: Vec<u64>) -> Result<f64, String> {
-        if ids.is_empty() {
-            return Err("Called IoU with empty list!".into());
-        };
-
         // peekable needs mut
-        let polygons = ids.iter().filter_map(|id| self.data.get(id));
+        let polygons = self.ids_to_polygons(&ids)?;
         let mut polygons2 = polygons.clone().peekable();
 
         if polygons2.peek().is_none() {
@@ -70,11 +61,32 @@ impl Instance {
         return Ok(intersection / union);
     }
 
+    // Not to be used in IoU
+    // This assumes the intersection is always 1 polygon
+    pub fn intersection(&self, ids: Vec<u64>) -> Result<Vec<Coord2D>, String> {
+        let polygon_data = self.ids_to_polygons(&ids)?;
+        let i = match PolygonData::unary_intersection(polygon_data).iter().next() {
+            Some(p) => p.exterior().coords().map(|c| (*c).into()).collect(),
+            None => vec![],
+        };
+        Ok(i)
+    }
+
     pub fn serialize(&self, format: TextFormat) -> Result<String, String> {
         return match format {
             TextFormat::JSON => serde_json::to_string(self).map_err(|e| e.to_string()),
             TextFormat::YAML => serde_yaml_ng::to_string(self).map_err(|e| e.to_string()),
         };
+    }
+
+    fn ids_to_polygons(
+        &self,
+        ids: &Vec<u64>,
+    ) -> Result<impl Iterator<Item = &PolygonData> + Clone, String> {
+        if ids.is_empty() {
+            return Err("Empty list of IDs!".into());
+        };
+        Ok(ids.iter().filter_map(|id| self.data.get(id)))
     }
 }
 
