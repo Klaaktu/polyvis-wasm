@@ -10,7 +10,7 @@ pub fn new_session() -> Instance {
 }
 
 #[wasm_bindgen]
-pub fn import_session(text: &str) -> Result<Instance, String> {
+pub fn deserialize_session(text: &str) -> Result<Instance, String> {
     serde_json::from_str(text).map_err(|_| "Parsing input failed!".into())
 }
 
