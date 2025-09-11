@@ -2,7 +2,7 @@
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
 export const new_session: () => number;
-export const import_session: (a: number, b: number) => [number, number, number];
+export const deserialize_session: (a: number, b: number) => [number, number, number];
 export const __wbg_coord2d_free: (a: number, b: number) => void;
 export const __wbg_get_coord2d_0: (a: number) => number;
 export const __wbg_set_coord2d_0: (a: number, b: number) => void;

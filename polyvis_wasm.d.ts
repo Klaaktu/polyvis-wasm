@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export function new_session(): Instance;
-export function import_session(text: string): Instance;
+export function deserialize_session(text: string): Instance;
 export function is_convex(points: Coord2D[]): boolean;
 export enum TextFormat {
   JSON = 0,
@@ -27,7 +27,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly new_session: () => number;
-  readonly import_session: (a: number, b: number) => [number, number, number];
+  readonly deserialize_session: (a: number, b: number) => [number, number, number];
   readonly __wbg_coord2d_free: (a: number, b: number) => void;
   readonly __wbg_get_coord2d_0: (a: number) => number;
   readonly __wbg_set_coord2d_0: (a: number, b: number) => void;

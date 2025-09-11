@@ -91,10 +91,10 @@ function takeFromExternrefTable0(idx) {
  * @param {string} text
  * @returns {Instance}
  */
-export function import_session(text) {
+export function deserialize_session(text) {
     const ptr0 = passStringToWasm0(text, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len0 = WASM_VECTOR_LEN;
-    const ret = wasm.import_session(ptr0, len0);
+    const ret = wasm.deserialize_session(ptr0, len0);
     if (ret[2]) {
         throw takeFromExternrefTable0(ret[1]);
     }
