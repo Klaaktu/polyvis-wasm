@@ -16,7 +16,7 @@ export class Coord2D {
 export class Instance {
   free(): void;
   constructor();
-  add_polygon(points: Float64Array, color: number): bigint;
+  add_polygon(points: Coord2D[], color: number): bigint;
   iou(ids: BigUint64Array): number;
   intersection(ids: BigUint64Array): Coord2D[];
   serialize(format: TextFormat): string;

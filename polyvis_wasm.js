@@ -136,22 +136,6 @@ export function is_convex(points) {
     return ret !== 0;
 }
 
-let cachedFloat64ArrayMemory0 = null;
-
-function getFloat64ArrayMemory0() {
-    if (cachedFloat64ArrayMemory0 === null || cachedFloat64ArrayMemory0.byteLength === 0) {
-        cachedFloat64ArrayMemory0 = new Float64Array(wasm.memory.buffer);
-    }
-    return cachedFloat64ArrayMemory0;
-}
-
-function passArrayF64ToWasm0(arg, malloc) {
-    const ptr = malloc(arg.length * 8, 8) >>> 0;
-    getFloat64ArrayMemory0().set(arg, ptr / 8);
-    WASM_VECTOR_LEN = arg.length;
-    return ptr;
-}
-
 let cachedBigUint64ArrayMemory0 = null;
 
 function getBigUint64ArrayMemory0() {
@@ -278,12 +262,12 @@ export class Instance {
         return this;
     }
     /**
-     * @param {Float64Array} points
+     * @param {Coord2D[]} points
      * @param {number} color
      * @returns {bigint}
      */
     add_polygon(points, color) {
-        const ptr0 = passArrayF64ToWasm0(points, wasm.__wbindgen_malloc);
+        const ptr0 = passArrayJsValueToWasm0(points, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ret = wasm.instance_add_polygon(this.__wbg_ptr, ptr0, len0, color);
         if (ret[2]) {
@@ -415,7 +399,6 @@ function __wbg_finalize_init(instance, module) {
     __wbg_init.__wbindgen_wasm_module = module;
     cachedBigUint64ArrayMemory0 = null;
     cachedDataViewMemory0 = null;
-    cachedFloat64ArrayMemory0 = null;
     cachedUint8ArrayMemory0 = null;
 
 
