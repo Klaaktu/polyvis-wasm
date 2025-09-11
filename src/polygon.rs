@@ -1,4 +1,4 @@
-use geo::{BooleanOps, LineString, MultiPolygon, Polygon, unary_union};
+use geo::{BooleanOps, LineString, MultiPolygon, Polygon};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -22,7 +22,7 @@ impl PolygonData {
     }
 
     pub fn unary_union<'a>(polygon_data: impl Iterator<Item = &'a PolygonData>) -> MultiPolygon {
-        unary_union(PolygonData::structs_to_polygons(polygon_data))
+        geo::unary_union(PolygonData::structs_to_polygons(polygon_data))
     }
 
     // Intersection has no similar unary function
