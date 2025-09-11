@@ -32,8 +32,8 @@ impl Instance {
         if !ext_line.is_convex() {
             return Err("Shape is not convex!".into());
         }
-        let p = PolygonData::new(ext_line, color);
         self.counter += 1;
+        let p = PolygonData::new(ext_line, color, self.counter);
         self.data.insert(self.counter, p);
         return Ok(self.counter);
     }

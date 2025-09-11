@@ -5,13 +5,15 @@ use serde::{Deserialize, Serialize};
 pub struct PolygonData {
     polygon: Polygon,
     color: u32, // Web Color is max 32 bit
+    id: u64,
 }
 
 impl PolygonData {
-    pub fn new(ext_line: LineString, color: u32) -> Self {
+    pub fn new(ext_line: LineString, color: u32, id: u64) -> Self {
         Self {
             polygon: Polygon::new(ext_line, vec![]),
             color: color,
+            id: id,
         }
     }
 
