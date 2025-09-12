@@ -21,10 +21,10 @@ pub enum TextFormat {
 impl Instance {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Instance {
-        return Instance {
+        Instance {
             data: HashMap::new(),
             counter: 0,
-        };
+        }
     }
 
     pub fn add_polygon(&mut self, points: Vec<Coord2D>, color: u32) -> Result<u64, String> {
@@ -35,7 +35,7 @@ impl Instance {
         self.counter += 1;
         let p = PolygonData::new(ext_line, color, self.counter);
         self.data.insert(self.counter, p);
-        return Ok(self.counter);
+        Ok(self.counter)
     }
 
     // Some fail conditions:
@@ -58,7 +58,7 @@ impl Instance {
             return Err("Division by 0! Bad polygon area.".into());
         }
 
-        return Ok(intersection / union);
+        Ok(intersection / union)
     }
 
     // Not to be used in IoU
@@ -73,10 +73,10 @@ impl Instance {
     }
 
     pub fn serialize(&self, format: TextFormat) -> Result<String, String> {
-        return match format {
+        match format {
             TextFormat::JSON => serde_json::to_string(self).map_err(|e| e.to_string()),
             TextFormat::YAML => serde_yaml_ng::to_string(self).map_err(|e| e.to_string()),
-        };
+        }
     }
 
     fn ids_to_polygons(

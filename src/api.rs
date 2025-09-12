@@ -6,7 +6,7 @@ use wasm_bindgen::prelude::*;
 // I need global / static hash map. Alternative is once_cell crate.
 #[wasm_bindgen]
 pub fn new_session() -> Instance {
-    return Instance::new();
+    Instance::new()
 }
 
 #[wasm_bindgen]
@@ -18,6 +18,15 @@ pub fn deserialize_session(text: &str) -> Result<Instance, String> {
 // wasm_bindgen can only export struct not tuple or array
 #[wasm_bindgen]
 pub struct Coord2D(pub f64, pub f64);
+
+// Provide a constructor, otherwise constructor is private in JS.
+#[wasm_bindgen]
+impl Coord2D {
+    #[wasm_bindgen(constructor)]
+    pub fn new(x: f64, y: f64) -> Coord2D {
+        Coord2D(x, y)
+    }
+}
 
 impl Into<Coord<f64>> for Coord2D {
     fn into(self) -> Coord<f64> {
