@@ -8,8 +8,8 @@ export enum TextFormat {
   YAML = 1,
 }
 export class Coord2D {
-  private constructor();
   free(): void;
+  constructor(x: number, y: number);
   0: number;
   1: number;
 }
@@ -34,6 +34,7 @@ export interface InitOutput {
   readonly __wbg_get_coord2d_1: (a: number) => number;
   readonly __wbg_set_coord2d_1: (a: number, b: number) => void;
   readonly is_convex: (a: number, b: number) => number;
+  readonly coord2d_new: (a: number, b: number) => number;
   readonly __wbg_instance_free: (a: number, b: number) => void;
   readonly instance_new: () => number;
   readonly instance_add_polygon: (a: number, b: number, c: number, d: number) => [bigint, number, number];

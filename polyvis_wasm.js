@@ -228,6 +228,16 @@ export class Coord2D {
     set 1(arg0) {
         wasm.__wbg_set_coord2d_1(this.__wbg_ptr, arg0);
     }
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
+    constructor(x, y) {
+        const ret = wasm.coord2d_new(x, y);
+        this.__wbg_ptr = ret >>> 0;
+        Coord2DFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
 }
 
 const InstanceFinalization = (typeof FinalizationRegistry === 'undefined')

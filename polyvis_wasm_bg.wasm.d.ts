@@ -9,6 +9,7 @@ export const __wbg_set_coord2d_0: (a: number, b: number) => void;
 export const __wbg_get_coord2d_1: (a: number) => number;
 export const __wbg_set_coord2d_1: (a: number, b: number) => void;
 export const is_convex: (a: number, b: number) => number;
+export const coord2d_new: (a: number, b: number) => number;
 export const __wbg_instance_free: (a: number, b: number) => void;
 export const instance_new: () => number;
 export const instance_add_polygon: (a: number, b: number, c: number, d: number) => [bigint, number, number];
