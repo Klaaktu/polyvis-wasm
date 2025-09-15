@@ -20,18 +20,13 @@ export class Instance {
   iou(ids: Uint32Array): number;
   intersection(ids: Uint32Array): Coord2D[];
   serialize(format: TextFormat): string;
+  coord_in_polygon(id: number, c: Coord2D): boolean;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly __wbg_instance_free: (a: number, b: number) => void;
-  readonly instance_new: () => number;
-  readonly instance_add_polygon: (a: number, b: number, c: number, d: number) => [number, number, number];
-  readonly instance_iou: (a: number, b: number, c: number) => [number, number, number];
-  readonly instance_intersection: (a: number, b: number, c: number) => [number, number, number, number];
-  readonly instance_serialize: (a: number, b: number) => [number, number, number, number];
   readonly new_session: () => number;
   readonly deserialize_session: (a: number, b: number) => [number, number, number];
   readonly __wbg_coord2d_free: (a: number, b: number) => void;
@@ -41,13 +36,20 @@ export interface InitOutput {
   readonly __wbg_set_coord2d_1: (a: number, b: number) => void;
   readonly is_convex: (a: number, b: number) => number;
   readonly coord2d_new: (a: number, b: number) => number;
+  readonly __wbg_instance_free: (a: number, b: number) => void;
+  readonly instance_new: () => number;
+  readonly instance_add_polygon: (a: number, b: number, c: number, d: number) => [number, number, number];
+  readonly instance_iou: (a: number, b: number, c: number) => [number, number, number];
+  readonly instance_intersection: (a: number, b: number, c: number) => [number, number, number, number];
+  readonly instance_serialize: (a: number, b: number) => [number, number, number, number];
+  readonly instance_coord_in_polygon: (a: number, b: number, c: number) => [number, number, number];
   readonly __wbindgen_export_0: WebAssembly.Table;
-  readonly __externref_table_alloc: () => number;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
+  readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __externref_table_dealloc: (a: number) => void;
+  readonly __externref_table_alloc: () => number;
   readonly __externref_drop_slice: (a: number, b: number) => void;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
-  readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_start: () => void;
 }
 

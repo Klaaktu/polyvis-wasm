@@ -1,12 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export const __wbg_instance_free: (a: number, b: number) => void;
-export const instance_new: () => number;
-export const instance_add_polygon: (a: number, b: number, c: number, d: number) => [number, number, number];
-export const instance_iou: (a: number, b: number, c: number) => [number, number, number];
-export const instance_intersection: (a: number, b: number, c: number) => [number, number, number, number];
-export const instance_serialize: (a: number, b: number) => [number, number, number, number];
 export const new_session: () => number;
 export const deserialize_session: (a: number, b: number) => [number, number, number];
 export const __wbg_coord2d_free: (a: number, b: number) => void;
@@ -16,11 +10,18 @@ export const __wbg_get_coord2d_1: (a: number) => number;
 export const __wbg_set_coord2d_1: (a: number, b: number) => void;
 export const is_convex: (a: number, b: number) => number;
 export const coord2d_new: (a: number, b: number) => number;
+export const __wbg_instance_free: (a: number, b: number) => void;
+export const instance_new: () => number;
+export const instance_add_polygon: (a: number, b: number, c: number, d: number) => [number, number, number];
+export const instance_iou: (a: number, b: number, c: number) => [number, number, number];
+export const instance_intersection: (a: number, b: number, c: number) => [number, number, number, number];
+export const instance_serialize: (a: number, b: number) => [number, number, number, number];
+export const instance_coord_in_polygon: (a: number, b: number, c: number) => [number, number, number];
 export const __wbindgen_export_0: WebAssembly.Table;
-export const __externref_table_alloc: () => number;
 export const __wbindgen_malloc: (a: number, b: number) => number;
+export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
 export const __externref_table_dealloc: (a: number) => void;
+export const __externref_table_alloc: () => number;
 export const __externref_drop_slice: (a: number, b: number) => void;
 export const __wbindgen_free: (a: number, b: number, c: number) => void;
-export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
 export const __wbindgen_start: () => void;
