@@ -28,7 +28,8 @@ impl Instance {
     }
 
     pub fn add_polygon(&mut self, points: Vec<Coord2D>, color: u32) -> Result<u32, String> {
-        let ext_line = LineString::from(points);
+        let mut ext_line = LineString::from(points);
+        ext_line.close();
         if !ext_line.is_convex() {
             return Err("Shape is not convex!".into());
         }
