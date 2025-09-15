@@ -1,5 +1,10 @@
-use geo::{BooleanOps, LineString, MultiPolygon, Polygon};
+use geo::{
+    BooleanOps, CoordinatePosition, LineString, MultiPolygon, Polygon,
+    coordinate_position::CoordPos,
+};
 use serde::{Deserialize, Serialize};
+
+use crate::Coord2D;
 
 #[derive(Serialize, Deserialize)]
 pub struct PolygonData {
@@ -37,6 +42,10 @@ impl PolygonData {
             Some(pointer) => MultiPolygon::new(vec![pointer.clone()]),
         };
         polygons.fold(intersection, |acc, p| acc.intersection(p))
+    }
+
+    pub fn coord_in_polygon(&self, c: Coord2D) -> bool {
+        self.polygon.coordinate_position(&c.into()) != CoordPos::Outside
     }
 }
 

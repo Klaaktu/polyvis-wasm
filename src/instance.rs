@@ -80,6 +80,13 @@ impl Instance {
         }
     }
 
+    pub fn coord_in_polygon(&self, id: u32, c: Coord2D) -> Result<bool, String> {
+        self.data
+            .get(&id)
+            .ok_or("ID does not correspond to a known polygon!".into())
+            .map(|p| p.coord_in_polygon(c))
+    }
+
     fn ids_to_polygons(
         &self,
         ids: &Vec<u32>,
