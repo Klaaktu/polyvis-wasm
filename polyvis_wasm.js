@@ -18,6 +18,66 @@ function getStringFromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
+
+let cachedDataViewMemory0 = null;
+
+function getDataViewMemory0() {
+    if (cachedDataViewMemory0 === null || cachedDataViewMemory0.buffer.detached === true || (cachedDataViewMemory0.buffer.detached === undefined && cachedDataViewMemory0.buffer !== wasm.memory.buffer)) {
+        cachedDataViewMemory0 = new DataView(wasm.memory.buffer);
+    }
+    return cachedDataViewMemory0;
+}
+
+let WASM_VECTOR_LEN = 0;
+
+function addToExternrefTable0(obj) {
+    const idx = wasm.__externref_table_alloc();
+    wasm.__wbindgen_export_0.set(idx, obj);
+    return idx;
+}
+
+function passArrayJsValueToWasm0(array, malloc) {
+    const ptr = malloc(array.length * 4, 4) >>> 0;
+    for (let i = 0; i < array.length; i++) {
+        const add = addToExternrefTable0(array[i]);
+        getDataViewMemory0().setUint32(ptr + 4 * i, add, true);
+    }
+    WASM_VECTOR_LEN = array.length;
+    return ptr;
+}
+
+function takeFromExternrefTable0(idx) {
+    const value = wasm.__wbindgen_export_0.get(idx);
+    wasm.__externref_table_dealloc(idx);
+    return value;
+}
+
+let cachedUint32ArrayMemory0 = null;
+
+function getUint32ArrayMemory0() {
+    if (cachedUint32ArrayMemory0 === null || cachedUint32ArrayMemory0.byteLength === 0) {
+        cachedUint32ArrayMemory0 = new Uint32Array(wasm.memory.buffer);
+    }
+    return cachedUint32ArrayMemory0;
+}
+
+function passArray32ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 4, 4) >>> 0;
+    getUint32ArrayMemory0().set(arg, ptr / 4);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
+}
+
+function getArrayJsValueFromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    const mem = getDataViewMemory0();
+    const result = [];
+    for (let i = ptr; i < ptr + 4 * len; i += 4) {
+        result.push(wasm.__wbindgen_export_0.get(mem.getUint32(i, true)));
+    }
+    wasm.__externref_drop_slice(ptr, len);
+    return result;
+}
 /**
  * @returns {Instance}
  */
@@ -25,8 +85,6 @@ export function new_session() {
     const ret = wasm.new_session();
     return Instance.__wrap(ret);
 }
-
-let WASM_VECTOR_LEN = 0;
 
 const cachedTextEncoder = (typeof TextEncoder !== 'undefined' ? new TextEncoder('utf-8') : { encode: () => { throw Error('TextEncoder not available') } } );
 
@@ -81,12 +139,6 @@ function passStringToWasm0(arg, malloc, realloc) {
     WASM_VECTOR_LEN = offset;
     return ptr;
 }
-
-function takeFromExternrefTable0(idx) {
-    const value = wasm.__wbindgen_export_0.get(idx);
-    wasm.__externref_table_dealloc(idx);
-    return value;
-}
 /**
  * @param {string} text
  * @returns {Instance}
@@ -101,30 +153,6 @@ export function deserialize_session(text) {
     return Instance.__wrap(ret[0]);
 }
 
-let cachedDataViewMemory0 = null;
-
-function getDataViewMemory0() {
-    if (cachedDataViewMemory0 === null || cachedDataViewMemory0.buffer.detached === true || (cachedDataViewMemory0.buffer.detached === undefined && cachedDataViewMemory0.buffer !== wasm.memory.buffer)) {
-        cachedDataViewMemory0 = new DataView(wasm.memory.buffer);
-    }
-    return cachedDataViewMemory0;
-}
-
-function addToExternrefTable0(obj) {
-    const idx = wasm.__externref_table_alloc();
-    wasm.__wbindgen_export_0.set(idx, obj);
-    return idx;
-}
-
-function passArrayJsValueToWasm0(array, malloc) {
-    const ptr = malloc(array.length * 4, 4) >>> 0;
-    for (let i = 0; i < array.length; i++) {
-        const add = addToExternrefTable0(array[i]);
-        getDataViewMemory0().setUint32(ptr + 4 * i, add, true);
-    }
-    WASM_VECTOR_LEN = array.length;
-    return ptr;
-}
 /**
  * @param {Coord2D[]} points
  * @returns {boolean}
@@ -136,32 +164,6 @@ export function is_convex(points) {
     return ret !== 0;
 }
 
-let cachedBigUint64ArrayMemory0 = null;
-
-function getBigUint64ArrayMemory0() {
-    if (cachedBigUint64ArrayMemory0 === null || cachedBigUint64ArrayMemory0.byteLength === 0) {
-        cachedBigUint64ArrayMemory0 = new BigUint64Array(wasm.memory.buffer);
-    }
-    return cachedBigUint64ArrayMemory0;
-}
-
-function passArray64ToWasm0(arg, malloc) {
-    const ptr = malloc(arg.length * 8, 8) >>> 0;
-    getBigUint64ArrayMemory0().set(arg, ptr / 8);
-    WASM_VECTOR_LEN = arg.length;
-    return ptr;
-}
-
-function getArrayJsValueFromWasm0(ptr, len) {
-    ptr = ptr >>> 0;
-    const mem = getDataViewMemory0();
-    const result = [];
-    for (let i = ptr; i < ptr + 4 * len; i += 4) {
-        result.push(wasm.__wbindgen_export_0.get(mem.getUint32(i, true)));
-    }
-    wasm.__externref_drop_slice(ptr, len);
-    return result;
-}
 /**
  * @enum {0 | 1}
  */
@@ -274,7 +276,7 @@ export class Instance {
     /**
      * @param {Coord2D[]} points
      * @param {number} color
-     * @returns {bigint}
+     * @returns {number}
      */
     add_polygon(points, color) {
         const ptr0 = passArrayJsValueToWasm0(points, wasm.__wbindgen_malloc);
@@ -283,14 +285,14 @@ export class Instance {
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
-        return BigInt.asUintN(64, ret[0]);
+        return ret[0] >>> 0;
     }
     /**
-     * @param {BigUint64Array} ids
+     * @param {Uint32Array} ids
      * @returns {number}
      */
     iou(ids) {
-        const ptr0 = passArray64ToWasm0(ids, wasm.__wbindgen_malloc);
+        const ptr0 = passArray32ToWasm0(ids, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ret = wasm.instance_iou(this.__wbg_ptr, ptr0, len0);
         if (ret[2]) {
@@ -299,11 +301,11 @@ export class Instance {
         return ret[0];
     }
     /**
-     * @param {BigUint64Array} ids
+     * @param {Uint32Array} ids
      * @returns {Coord2D[]}
      */
     intersection(ids) {
-        const ptr0 = passArray64ToWasm0(ids, wasm.__wbindgen_malloc);
+        const ptr0 = passArray32ToWasm0(ids, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ret = wasm.instance_intersection(this.__wbg_ptr, ptr0, len0);
         if (ret[3]) {
@@ -407,8 +409,8 @@ function __wbg_init_memory(imports, memory) {
 function __wbg_finalize_init(instance, module) {
     wasm = instance.exports;
     __wbg_init.__wbindgen_wasm_module = module;
-    cachedBigUint64ArrayMemory0 = null;
     cachedDataViewMemory0 = null;
+    cachedUint32ArrayMemory0 = null;
     cachedUint8ArrayMemory0 = null;
 
 
