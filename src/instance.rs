@@ -7,8 +7,8 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 #[derive(Serialize, Deserialize)]
 pub struct Instance {
-    data: HashMap<u64, PolygonData>,
-    counter: u64, // Used for hash map key, not actual count of items!
+    data: HashMap<u32, PolygonData>,
+    counter: u32, // Used for hash map key, not actual count of items!
 }
 
 #[wasm_bindgen]
@@ -27,7 +27,7 @@ impl Instance {
         }
     }
 
-    pub fn add_polygon(&mut self, points: Vec<Coord2D>, color: u32) -> Result<u64, String> {
+    pub fn add_polygon(&mut self, points: Vec<Coord2D>, color: u32) -> Result<u32, String> {
         let ext_line = LineString::from(points);
         if !ext_line.is_convex() {
             return Err("Shape is not convex!".into());
@@ -42,7 +42,7 @@ impl Instance {
     // Passed id is empty - caller weird
     // filter_map is empty - caller has bad ids
     // union is 0, causes NaN - bad stored data
-    pub fn iou(&self, ids: Vec<u64>) -> Result<f64, String> {
+    pub fn iou(&self, ids: Vec<u32>) -> Result<f64, String> {
         // peekable needs mut
         let polygons = self.ids_to_polygons(&ids)?;
         let mut polygons2 = polygons.clone().peekable();
@@ -63,7 +63,7 @@ impl Instance {
 
     // Not to be used in IoU
     // This assumes the intersection is always 1 polygon
-    pub fn intersection(&self, ids: Vec<u64>) -> Result<Vec<Coord2D>, String> {
+    pub fn intersection(&self, ids: Vec<u32>) -> Result<Vec<Coord2D>, String> {
         let polygon_data = self.ids_to_polygons(&ids)?;
         let i = match PolygonData::unary_intersection(polygon_data).iter().next() {
             Some(p) => p.exterior().coords().map(|c| (*c).into()).collect(),
@@ -81,7 +81,7 @@ impl Instance {
 
     fn ids_to_polygons(
         &self,
-        ids: &Vec<u64>,
+        ids: &Vec<u32>,
     ) -> Result<impl Iterator<Item = &PolygonData> + Clone, String> {
         if ids.is_empty() {
             return Err("Empty list of IDs!".into());
