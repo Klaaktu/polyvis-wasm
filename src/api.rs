@@ -1,5 +1,5 @@
-use crate::instance::Instance;
-use geo::{Coord, IsConvex, LineString, coord};
+use crate::{instance::Instance, utils::closed_line};
+use geo::{Coord, IsConvex, coord};
 use wasm_bindgen::prelude::*;
 
 // Call this in JS main(). This is like main() for lib.
@@ -42,5 +42,5 @@ impl Into<Coord2D> for Coord<f64> {
 
 #[wasm_bindgen]
 pub fn is_convex(points: Vec<Coord2D>) -> bool {
-    LineString::from(points).is_convex()
+    closed_line(points).is_convex()
 }

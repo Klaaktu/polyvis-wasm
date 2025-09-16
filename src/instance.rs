@@ -1,6 +1,6 @@
-use crate::Coord2D;
+use crate::{Coord2D, utils::closed_line};
 use geo::{
-    Area, BooleanOps, Coord, CoordinatePosition, IsConvex, LineString, MultiPolygon, Polygon,
+    Area, BooleanOps, Coord, CoordinatePosition, IsConvex, MultiPolygon, Polygon,
     coordinate_position::CoordPos, unary_union,
 };
 use serde::{Deserialize, Serialize};
@@ -33,14 +33,14 @@ impl Instance {
     }
 
     pub fn add_polygon(&mut self, points: Vec<Coord2D>) -> Result<u32, String> {
-        let p = Instance::vec_to_convex_poly(points)?;
+        let p = vec_to_convex_poly(points)?;
         self.counter += 1;
         self.data.insert(self.counter, p);
         Ok(self.counter)
     }
 
     pub fn mod_polygon(&mut self, id: u32, points: Vec<Coord2D>) -> Result<(), String> {
-        let p = Instance::vec_to_convex_poly(points)?;
+        let p = vec_to_convex_poly(points)?;
         self.data.insert(id, p);
         Ok(())
     }
@@ -62,7 +62,7 @@ impl Instance {
             return Err(S1.into());
         }
 
-        let intersection = Instance::unary_intersection(polygons).unsigned_area();
+        let intersection = unary_intersection(polygons).unsigned_area();
         let union = unary_union(polygons2).unsigned_area();
 
         if union == 0.0 {
@@ -85,7 +85,7 @@ impl Instance {
     // This assumes the intersection is always 1 polygon
     pub fn intersection(&self, ids: Vec<u32>) -> Result<Vec<Coord2D>, String> {
         let polygon_data = self.ids_to_polygons(&ids)?;
-        let i = match Instance::unary_intersection(polygon_data).iter().next() {
+        let i = match unary_intersection(polygon_data).iter().next() {
             Some(p) => p.exterior().coords().map(|c| (*c).into()).collect(),
             None => vec![],
         };
@@ -99,15 +99,6 @@ impl Instance {
         }
     }
 
-    fn vec_to_convex_poly(points: Vec<Coord2D>) -> Result<Polygon, String> {
-        let mut ext_line = LineString::from(points);
-        ext_line.close();
-        if !ext_line.is_convex() {
-            return Err("Shape is not convex!".into());
-        }
-        Ok(Polygon::new(ext_line, vec![]))
-    }
-
     fn ids_to_polygons(
         &self,
         ids: &Vec<u32>,
@@ -117,14 +108,22 @@ impl Instance {
         };
         Ok(ids.iter().filter_map(|id| self.data.get(id)))
     }
+}
 
-    fn unary_intersection<'a>(mut polygons: impl Iterator<Item = &'a Polygon>) -> MultiPolygon {
-        let intersection = match polygons.next() {
-            None => return MultiPolygon::new(vec![]),
-            Some(pointer) => MultiPolygon::new(vec![pointer.clone()]),
-        };
-        polygons.fold(intersection, |acc, p| acc.intersection(p))
+fn vec_to_convex_poly(points: Vec<Coord2D>) -> Result<Polygon, String> {
+    let ext_line = closed_line(points);
+    if !ext_line.is_convex() {
+        return Err("Shape is not convex!".into());
     }
+    Ok(Polygon::new(ext_line, vec![]))
+}
+
+fn unary_intersection<'a>(mut polygons: impl Iterator<Item = &'a Polygon>) -> MultiPolygon {
+    let intersection = match polygons.next() {
+        None => return MultiPolygon::new(vec![]),
+        Some(pointer) => MultiPolygon::new(vec![pointer.clone()]),
+    };
+    polygons.fold(intersection, |acc, p| acc.intersection(p))
 }
 
 // Iterator has state, which is why it's usually not shared and some methods take ownership instead of reference.
