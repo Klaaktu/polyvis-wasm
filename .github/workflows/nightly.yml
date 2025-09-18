@@ -2,7 +2,10 @@ name: Nightly release
 # Publish to both GitHub releases and the pkg branch (Deno cannot import a zip).
 
 env:
-  OUTPUT: polyvis-wasm.7z
+  DIR: pkg
+  BRANCH: pkg
+  BRANCH_PATH: branch:pkg
+  NAME: polyvis-wasm.7z
 
 on:
   push:
@@ -37,7 +40,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-            pkg/
+            ${{ env.DIR}}/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install wasm-pack
         run: curl https://drager.github.io/wasm-pack/installer/init.sh -sSf | bash
@@ -47,25 +50,25 @@ jobs:
       - name: Add Deno type declaration
         run: ./add-deno-ts.sh
       - name: Archive
-        run: 7z a -mx=9 ${{ env.OUTPUT }} pkg
+        run: 7z a -mx=9 ${NAME} ${DIR}
       # A GitHub release must have a tag
       - name: Move/Create "nightly" tag
         run: |
           git tag --force nightly ${{ github.sha }}
           git push --tags --force
       - name: Refresh release file
-        run: gh release upload nightly ${{ env.OUTPUT }} --clobber
+        run: gh release upload nightly ${NAME} --clobber
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Checkout "pkg" branch
+      - name: Checkout package branch
         uses: actions/checkout@v5
         with:
-          ref: pkg
-          path: pkg-branch
-      - name: Update pkg branch
+          ref: ${{ env.BRANCH }}
+          path: ${{ env.BRANCH_PATH }}
+      - name: Update package branch
         run: |
-          cp -a pkg/. pkg-branch/
-          cd pkg-branch/
+          cp -a ${DIR}/. ${BRANCH_PATH}
+          cd ${BRANCH_PATH}
           rm .gitignore
           git add -A
           git config user.name "github-actions[bot]"
