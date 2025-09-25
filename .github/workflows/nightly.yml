@@ -4,7 +4,6 @@ name: Nightly release
 env:
   DIR: pkg
   BRANCH: pkg
-  BRANCH_PATH: branch:pkg
   NAME: polyvis-wasm.7z
 
 on:
@@ -27,8 +26,13 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout main
         uses: actions/checkout@v5
+      - name: Checkout package branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.BRANCH }}
+          path: ${{ env.DIR }}
       - name: Rust cache
         uses: actions/cache@v4
         with:
@@ -49,29 +53,24 @@ jobs:
       # https://github.com/drager/wasm-pack/issues/1502
       - name: Add Deno type declaration
         run: ./add-deno-ts.sh
-      - name: Archive
-        run: 7z a -mx=9 ${NAME} ${DIR}
-      # A GitHub release must have a tag
-      - name: Move/Create "nightly" tag
-        run: |
-          git tag --force nightly ${{ github.sha }}
-          git push --tags --force
-      - name: Refresh release file
-        run: gh release upload nightly ${NAME} --clobber
-        env:
-          GH_TOKEN: ${{ github.token }}
-      - name: Checkout package branch
-        uses: actions/checkout@v5
-        with:
-          ref: ${{ env.BRANCH }}
-          path: ${{ env.BRANCH_PATH }}
       - name: Update package branch
+        working-directory: ${{ env.DIR }}
         run: |
-          cp -a ${DIR}/. ${BRANCH_PATH}
-          cd ${BRANCH_PATH}
           rm .gitignore
           git add -A
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Auto update build artifacts"
           git push
+      # A GitHub release must have a tag
+      - name: Move/Create "nightly" tag
+        run: |
+          git tag --force nightly ${{ github.sha }}
+          git push --tags --force
+      - name: Refresh release file
+        working-directory: ${{ env.DIR }}
+        run: |
+          7z a -mx=9 ${NAME} * -x!.*
+          gh release upload nightly ${NAME} --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
