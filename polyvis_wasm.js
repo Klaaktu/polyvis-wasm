@@ -86,11 +86,6 @@ function _assertClass(instance, klass) {
     }
 }
 
-function getArrayU32FromWasm0(ptr, len) {
-    ptr = ptr >>> 0;
-    return getUint32ArrayMemory0().subarray(ptr / 4, ptr / 4 + len);
-}
-
 function getArrayJsValueFromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     const mem = getDataViewMemory0();
@@ -345,15 +340,13 @@ export class Instance {
     }
     /**
      * @param {Coord2D} c
-     * @returns {Uint32Array}
+     * @returns {number | undefined}
      */
     polygons_under_coord(c) {
         _assertClass(c, Coord2D);
         var ptr0 = c.__destroy_into_raw();
         const ret = wasm.instance_polygons_under_coord(this.__wbg_ptr, ptr0);
-        var v2 = getArrayU32FromWasm0(ret[0], ret[1]).slice();
-        wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
-        return v2;
+        return ret === 0x100000001 ? undefined : ret;
     }
     /**
      * @param {Uint32Array} ids

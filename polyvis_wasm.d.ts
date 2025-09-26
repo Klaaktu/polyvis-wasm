@@ -20,7 +20,7 @@ export class Instance {
   mod_polygon(id: number, points: Coord2D[]): void;
   del_polygon(id: number): void;
   iou(ids: Uint32Array): number;
-  polygons_under_coord(c: Coord2D): Uint32Array;
+  polygons_under_coord(c: Coord2D): number | undefined;
   intersection(ids: Uint32Array): Coord2D[];
   serialize(format: TextFormat): string;
 }
@@ -35,7 +35,7 @@ export interface InitOutput {
   readonly instance_mod_polygon: (a: number, b: number, c: number, d: number) => [number, number];
   readonly instance_del_polygon: (a: number, b: number) => [number, number];
   readonly instance_iou: (a: number, b: number, c: number) => [number, number, number];
-  readonly instance_polygons_under_coord: (a: number, b: number) => [number, number];
+  readonly instance_polygons_under_coord: (a: number, b: number) => number;
   readonly instance_intersection: (a: number, b: number, c: number) => [number, number, number, number];
   readonly instance_serialize: (a: number, b: number) => [number, number, number, number];
   readonly new_session: () => number;
@@ -45,14 +45,14 @@ export interface InitOutput {
   readonly __wbg_set_coord2d_0: (a: number, b: number) => void;
   readonly __wbg_get_coord2d_1: (a: number) => number;
   readonly __wbg_set_coord2d_1: (a: number, b: number) => void;
-  readonly is_convex: (a: number, b: number) => number;
   readonly coord2d_new: (a: number, b: number) => number;
+  readonly is_convex: (a: number, b: number) => number;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __externref_table_alloc: () => number;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __externref_table_dealloc: (a: number) => void;
-  readonly __wbindgen_free: (a: number, b: number, c: number) => void;
   readonly __externref_drop_slice: (a: number, b: number) => void;
+  readonly __wbindgen_free: (a: number, b: number, c: number) => void;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_start: () => void;
 }
