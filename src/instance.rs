@@ -72,13 +72,13 @@ impl Instance {
         Ok(intersection / union)
     }
 
-    pub fn polygons_under_coord(&self, c: Coord2D) -> Vec<u32> {
+    pub fn polygons_under_coord(&self, c: Coord2D) -> Option<u32> {
         let geo_coord: Coord = c.into();
         self.data
             .iter()
             .filter(|(_, poly)| poly.coordinate_position(&geo_coord) != CoordPos::Outside)
             .map(|(&id, _)| id)
-            .collect()
+            .max()
     }
 
     // Not to be used in IoU
