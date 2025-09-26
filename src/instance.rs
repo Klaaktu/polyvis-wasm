@@ -1,8 +1,8 @@
-use crate::{Coord2D, utils::closed_line};
-use geo::{
-    Area, BooleanOps, Coord, CoordinatePosition, IsConvex, MultiPolygon, Polygon,
-    coordinate_position::CoordPos, unary_union,
+use crate::{
+    api::Coord2D,
+    utils::{rand_convex_poly, unary_intersection, vec_to_convex_poly},
 };
+use geo::{Area, Coord, CoordinatePosition, Polygon, coordinate_position::CoordPos, unary_union};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, vec};
 use wasm_bindgen::prelude::*;
@@ -92,6 +92,13 @@ impl Instance {
         Ok(i)
     }
 
+    pub fn rand_convex_poly(&self, n: usize, up_bound: f64) -> (u32, Vec<Coord2D>) {
+        let p = rand_convex_poly(n, up_bound);
+        self.counter += 1;
+        self.data.insert(self.counter, p);
+        (self.counter, p)
+    }
+
     pub fn serialize(&self, format: TextFormat) -> Result<String, String> {
         match format {
             TextFormat::JSON => serde_json::to_string(self).map_err(|e| e.to_string()),
@@ -108,22 +115,6 @@ impl Instance {
         };
         Ok(ids.iter().filter_map(|id| self.data.get(id)))
     }
-}
-
-fn vec_to_convex_poly(points: Vec<Coord2D>) -> Result<Polygon, String> {
-    let ext_line = closed_line(points);
-    if !ext_line.is_convex() {
-        return Err("Shape is not convex!".into());
-    }
-    Ok(Polygon::new(ext_line, vec![]))
-}
-
-fn unary_intersection<'a>(mut polygons: impl Iterator<Item = &'a Polygon>) -> MultiPolygon {
-    let intersection = match polygons.next() {
-        None => return MultiPolygon::new(vec![]),
-        Some(pointer) => MultiPolygon::new(vec![pointer.clone()]),
-    };
-    polygons.fold(intersection, |acc, p| acc.intersection(p))
 }
 
 // Iterator has state, which is why it's usually not shared and some methods take ownership instead of reference.
