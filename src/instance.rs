@@ -1,6 +1,6 @@
 use crate::{
     api::Coord2D,
-    utils::{rand_convex_poly, unary_intersection, vec_to_convex_poly},
+    utils::{rand_convex_verts, unary_intersection},
 };
 use geo::{Area, Coord, CoordinatePosition, Polygon, coordinate_position::CoordPos, unary_union};
 use serde::{Deserialize, Serialize};
@@ -22,6 +22,10 @@ pub enum TextFormat {
     YAML,
 }
 
+// pub field for wasm-bindgen must implement Copy, or custom getter (e.g. with clone)
+#[wasm_bindgen]
+pub struct PolyAId(pub u32, #[wasm_bindgen(getter_with_clone)] pub Vec<Coord2D>);
+
 #[wasm_bindgen]
 impl Instance {
     #[wasm_bindgen(constructor)]
@@ -32,17 +36,16 @@ impl Instance {
         }
     }
 
-    pub fn add_polygon(&mut self, points: Vec<Coord2D>) -> Result<u32, String> {
-        let p = vec_to_convex_poly(points)?;
+    pub fn add_polygon(&mut self, points: Vec<Coord2D>) -> u32 {
+        let p = Polygon::new(points.into(), vec![]);
         self.counter += 1;
         self.data.insert(self.counter, p);
-        Ok(self.counter)
+        self.counter
     }
 
-    pub fn mod_polygon(&mut self, id: u32, points: Vec<Coord2D>) -> Result<(), String> {
-        let p = vec_to_convex_poly(points)?;
+    pub fn mod_polygon(&mut self, id: u32, points: Vec<Coord2D>) -> () {
+        let p = Polygon::new(points.into(), vec![]);
         self.data.insert(id, p);
-        Ok(())
     }
 
     pub fn del_polygon(&mut self, id: u32) -> Result<(), String> {
@@ -92,11 +95,13 @@ impl Instance {
         Ok(i)
     }
 
-    pub fn rand_convex_poly(&self, n: usize, up_bound: f64) -> (u32, Vec<Coord2D>) {
-        let p = rand_convex_poly(n, up_bound);
+    pub fn rand_convex_poly(&mut self, n: usize, up_bound: f64) -> PolyAId {
+        let verts = rand_convex_verts(n, up_bound);
+        let res: Vec<Coord2D> = verts.iter().map(|&e| e.into()).collect();
         self.counter += 1;
-        self.data.insert(self.counter, p);
-        (self.counter, p)
+        self.data
+            .insert(self.counter, Polygon::new(verts.into(), vec![]));
+        PolyAId(self.counter, res)
     }
 
     pub fn serialize(&self, format: TextFormat) -> Result<String, String> {

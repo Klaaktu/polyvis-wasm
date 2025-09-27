@@ -16,7 +16,9 @@ pub fn deserialize_session(text: &str) -> Result<Instance, String> {
 
 // Wrapper struct for geo::Coord. wasm_bindgen cannot export crate items.
 // wasm_bindgen can only export struct not tuple or array
+// Coord2D is made copy-able to make Vec<Coord2D> clone-able. Copy requires Clone so derive both.
 #[wasm_bindgen]
+#[derive(Clone, Copy)]
 pub struct Coord2D(pub f64, pub f64);
 
 // Provide a constructor, otherwise constructor is private in JS.
