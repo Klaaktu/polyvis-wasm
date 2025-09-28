@@ -2,7 +2,10 @@ use crate::{
     api::Coord2D,
     utils::{rand_convex_verts, unary_intersection},
 };
-use geo::{Area, Coord, CoordinatePosition, Polygon, coordinate_position::CoordPos, unary_union};
+use geo::{
+    Area, BooleanOps, Coord, CoordinatePosition, Intersects, Polygon,
+    coordinate_position::CoordPos, unary_union,
+};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, vec};
 use wasm_bindgen::prelude::*;
@@ -111,6 +114,27 @@ impl Instance {
         }
     }
 
+    /// Import from a text containing a vector of polygons,
+    /// where each polygon is a vector of coords, and each cord is an array of (two) f64.
+    pub fn import_list(&mut self, text: &str) -> Result<(), String> {
+        let vec: Vec<Vec<[f64; 2]>> =
+            serde_json::from_str(text).map_err(|_| "Parsing input failed!")?;
+        let polygons = vec.iter().map(|verts| {
+            Polygon::new(
+                verts.iter().map(|c| Coord { x: c[0], y: c[1] }).collect(),
+                vec![],
+            )
+        });
+        let n: u32 = vec
+            .len()
+            .try_into()
+            .map_err(|_| "Length may be too large!")?;
+        let kvs = (self.counter + 1..self.counter + 1 + n).zip(polygons);
+        self.data.extend(kvs);
+        self.counter += n;
+        Ok(())
+    }
+
     fn ids_to_polygons(
         &self,
         ids: &Vec<u32>,
@@ -120,6 +144,32 @@ impl Instance {
         };
         Ok(ids.iter().filter_map(|id| self.data.get(id)))
     }
+
+    // Currently not exported because this feature is not required and I don't want another wrapper struct.
+    fn all_pair_iou(&self) -> Vec<(u32, Vec<(u32, f64)>)> {
+        let kvs: Vec<(&u32, &Polygon)> = self.data.iter().collect();
+        let n = kvs.len();
+        let mut res = vec![];
+        for i in 0..n {
+            let mut intersections = vec![];
+            for j in i + 1..n {
+                if kvs[i].1.intersects(kvs[j].1) {
+                    intersections.push((*kvs[j].0, iou_simple(kvs[i].1, kvs[j].1)))
+                }
+            }
+            if !intersections.is_empty() {
+                res.push((*kvs[i].0, intersections))
+            };
+        }
+        res
+    }
+}
+
+fn iou_simple(a: &Polygon, b: &Polygon) -> f64 {
+    let inter = a.intersection(b).unsigned_area();
+    let union = a.union(b).unsigned_area();
+    debug_assert!(union != 0.0, "Union is 0. Division by 0!");
+    inter / union
 }
 
 // Iterator has state, which is why it's usually not shared and some methods take ownership instead of reference.
