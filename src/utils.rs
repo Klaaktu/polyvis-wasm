@@ -29,9 +29,6 @@ pub fn unary_intersection<'a>(mut polygons: impl Iterator<Item = &'a Polygon>) -
 }
 
 pub fn rand_convex_verts(n: usize, up_bound: f64) -> Vec<Coord> {
-    //     if let Ok(p) = crate::algorithms::convex_hull(vertices) {
-    //         return p;
-
     let n = max(n, 3);
     let mut vectors: Vec<Coord> = zip(random_sum_zero(n, up_bound), random_sum_zero(n, up_bound))
         .map(|(a, b)| Coord { x: a, y: b })
