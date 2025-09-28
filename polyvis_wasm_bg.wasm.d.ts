@@ -25,6 +25,7 @@ export const instance_polygons_under_coord: (a: number, b: number) => number;
 export const instance_intersection: (a: number, b: number, c: number) => [number, number, number, number];
 export const instance_rand_convex_poly: (a: number, b: number, c: number) => number;
 export const instance_serialize: (a: number, b: number) => [number, number, number, number];
+export const instance_import_list: (a: number, b: number, c: number) => [number, number];
 export const __wbindgen_exn_store: (a: number) => void;
 export const __externref_table_alloc: () => number;
 export const __wbindgen_export_2: WebAssembly.Table;

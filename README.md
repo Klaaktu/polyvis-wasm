@@ -1,3 +1,5 @@
+[![Nightly release](https://github.com/Klaaktu/polyvis-wasm/actions/workflows/nightly.yml/badge.svg)](https://github.com/Klaaktu/polyvis-wasm/actions/workflows/nightly.yml)
+
 [GeoRust](https://github.com/georust/geo) wrapper for [my homework](https://github.com/mtel0004/FIT3162).
 
 ## Build
@@ -29,10 +31,5 @@ Further reading: https://kylebarron.dev/blog/geos-wasm (p.s. [GEOS](https://libg
 
 ## To do
 - [ ] Use WASM's linear memory in JS?
-- [ ] Import JS functions to Rust to avoid data copy?
-- [ ] Test edge cases: empty list to iou()
-- [x] Dependabot
-- [x] Can JS handle NaN (div by 0 in float)? EDIT: Div by 0 now returns Error.
-- [x] Put the export function in JS instead, except the serialization. I don't like all the explicit error propagating. Those errors likely won't be fatal in JS anyway.
+- [ ] Import JS functions to Rust to avoid data copy and using structs to pass data.
 - [ ] Multi-threading?
-- [ ] Graph data structure for intersections between pairs.

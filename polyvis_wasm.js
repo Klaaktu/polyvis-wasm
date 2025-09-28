@@ -399,6 +399,19 @@ export class Instance {
             wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
         }
     }
+    /**
+     * Import from a text containing a vector of polygons,
+     * where each polygon is a vector of coords, and each cord is an array of (two) f64.
+     * @param {string} text
+     */
+    import_list(text) {
+        const ptr0 = passStringToWasm0(text, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.instance_import_list(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
 }
 if (Symbol.dispose) Instance.prototype[Symbol.dispose] = Instance.prototype.free;
 

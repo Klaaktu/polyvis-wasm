@@ -26,6 +26,11 @@ export class Instance {
   intersection(ids: Uint32Array): Coord2D[];
   rand_convex_poly(n: number, up_bound: number): PolyAId;
   serialize(format: TextFormat): string;
+  /**
+   * Import from a text containing a vector of polygons,
+   * where each polygon is a vector of coords, and each cord is an array of (two) f64.
+   */
+  import_list(text: string): void;
 }
 export class PolyAId {
   private constructor();
@@ -63,6 +68,7 @@ export interface InitOutput {
   readonly instance_intersection: (a: number, b: number, c: number) => [number, number, number, number];
   readonly instance_rand_convex_poly: (a: number, b: number, c: number) => number;
   readonly instance_serialize: (a: number, b: number) => [number, number, number, number];
+  readonly instance_import_list: (a: number, b: number, c: number) => [number, number];
   readonly __wbindgen_exn_store: (a: number) => void;
   readonly __externref_table_alloc: () => number;
   readonly __wbindgen_export_2: WebAssembly.Table;
