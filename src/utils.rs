@@ -36,7 +36,8 @@ pub fn rand_convex_verts(n: usize, up_bound: f64) -> Vec<Coord> {
     let mut vectors: Vec<Coord> = zip(random_sum_zero(n, up_bound), random_sum_zero(n, up_bound))
         .map(|(a, b)| Coord { x: a, y: b })
         .collect();
-    vectors.sort_by(|a, b| a.y.atan2(a.x).total_cmp(&b.y.atan2(b.x)));
+    // atan2 range is [-pi,pi], sort in reverse order so the polygon is upright
+    vectors.sort_by(|a, b| b.y.atan2(b.x).total_cmp(&a.y.atan2(a.x)));
     vectors
         .iter()
         .scan(Coord::zero(), |acc, &v| {
@@ -66,8 +67,8 @@ fn random_sum_zero(n: usize, up_bound: f64) -> Vec<f64> {
     let min = *nums.first().unwrap();
     let max = nums.last().unwrap();
     let n_pos = random_range(1..n);
-    let positive = scan_iter(&nums[..n_pos], min, max, |prev, x| x - prev);
-    let negative = scan_iter(&nums[n_pos..], min, max, |prev, x| prev - x);
+    let positive = scan_iter(&nums[1..n_pos], min, max, |prev, x| x - prev);
+    let negative = scan_iter(&nums[n_pos..n - 1], min, max, |prev, x| prev - x);
     let mut res: Vec<f64> = positive.chain(negative).collect();
     res.shuffle(&mut rng());
     res
