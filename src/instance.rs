@@ -3,8 +3,8 @@ use crate::{
     utils::{rand_convex_verts, unary_intersection},
 };
 use geo::{
-    Area, BooleanOps, Coord, CoordinatePosition, Intersects, Polygon,
-    coordinate_position::CoordPos, unary_union,
+    Area, BooleanOps, Coord, CoordinatePosition, Intersects, LineString, Orient, Polygon,
+    coordinate_position::CoordPos, orient::Direction::Default, unary_union,
 };
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, vec};
@@ -34,15 +34,14 @@ impl Instance {
     }
 
     pub fn add_polygon(&mut self, points: Vec<Coord2D>) -> u32 {
-        let p = Polygon::new(points.into(), vec![]);
         self.counter += 1;
-        self.data.insert(self.counter, p);
+        self.data
+            .insert(self.counter, new_oriented_poly(points.into()));
         self.counter
     }
 
     pub fn mod_polygon(&mut self, id: u32, points: Vec<Coord2D>) -> () {
-        let p = Polygon::new(points.into(), vec![]);
-        self.data.insert(id, p);
+        self.data.insert(id, new_oriented_poly(points.into()));
     }
 
     pub fn del_polygon(&mut self, id: u32) -> Result<(), String> {
@@ -97,7 +96,7 @@ impl Instance {
         let res: Vec<Coord2D> = verts.iter().map(|&e| e.into()).collect();
         self.counter += 1;
         self.data
-            .insert(self.counter, Polygon::new(verts.into(), vec![]));
+            .insert(self.counter, new_oriented_poly(verts.into()));
         PolyAId(self.counter, res)
     }
 
@@ -111,10 +110,7 @@ impl Instance {
         let vec: Vec<Vec<[f64; 2]>> =
             serde_json::from_str(text).map_err(|_| "Parsing input failed!")?;
         let polygons = vec.iter().map(|verts| {
-            Polygon::new(
-                verts.iter().map(|c| Coord { x: c[0], y: c[1] }).collect(),
-                vec![],
-            )
+            new_oriented_poly(verts.iter().map(|c| Coord { x: c[0], y: c[1] }).collect())
         });
         let n: u32 = vec
             .len()
@@ -170,4 +166,7 @@ fn iou_simple(a: &Polygon, b: &Polygon) -> f64 {
     inter / union
 }
 
+fn new_oriented_poly(line: LineString) -> Polygon {
+    Polygon::new(line, vec![]).orient(Default)
+}
 // Iterator has state, which is why it's usually not shared and some methods take ownership instead of reference.
