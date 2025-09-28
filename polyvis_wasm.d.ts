@@ -3,10 +3,6 @@
 export function new_session(): Instance;
 export function deserialize_session(text: string): Instance;
 export function is_convex(points: Coord2D[]): boolean;
-export enum TextFormat {
-  JSON = 0,
-  YAML = 1,
-}
 export class Coord2D {
   free(): void;
   [Symbol.dispose](): void;
@@ -25,7 +21,7 @@ export class Instance {
   polygons_under_coord(c: Coord2D): number | undefined;
   intersection(ids: Uint32Array): Coord2D[];
   rand_convex_poly(n: number, up_bound: number): PolyAId;
-  serialize(format: TextFormat): string;
+  serialize(): string;
   /**
    * Import from a text containing a vector of polygons,
    * where each polygon is a vector of coords, and each cord is an array of (two) f64.
@@ -44,15 +40,6 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly new_session: () => number;
-  readonly deserialize_session: (a: number, b: number) => [number, number, number];
-  readonly __wbg_coord2d_free: (a: number, b: number) => void;
-  readonly __wbg_get_coord2d_0: (a: number) => number;
-  readonly __wbg_set_coord2d_0: (a: number, b: number) => void;
-  readonly __wbg_get_coord2d_1: (a: number) => number;
-  readonly __wbg_set_coord2d_1: (a: number, b: number) => void;
-  readonly is_convex: (a: number, b: number) => number;
-  readonly coord2d_new: (a: number, b: number) => number;
   readonly __wbg_instance_free: (a: number, b: number) => void;
   readonly __wbg_polyaid_free: (a: number, b: number) => void;
   readonly __wbg_get_polyaid_0: (a: number) => number;
@@ -67,16 +54,25 @@ export interface InitOutput {
   readonly instance_polygons_under_coord: (a: number, b: number) => number;
   readonly instance_intersection: (a: number, b: number, c: number) => [number, number, number, number];
   readonly instance_rand_convex_poly: (a: number, b: number, c: number) => number;
-  readonly instance_serialize: (a: number, b: number) => [number, number, number, number];
+  readonly instance_serialize: (a: number) => [number, number, number, number];
   readonly instance_import_list: (a: number, b: number, c: number) => [number, number];
+  readonly new_session: () => number;
+  readonly deserialize_session: (a: number, b: number) => [number, number, number];
+  readonly __wbg_coord2d_free: (a: number, b: number) => void;
+  readonly __wbg_get_coord2d_0: (a: number) => number;
+  readonly __wbg_set_coord2d_0: (a: number, b: number) => void;
+  readonly __wbg_get_coord2d_1: (a: number) => number;
+  readonly __wbg_set_coord2d_1: (a: number, b: number) => void;
+  readonly is_convex: (a: number, b: number) => number;
+  readonly coord2d_new: (a: number, b: number) => number;
   readonly __wbindgen_exn_store: (a: number) => void;
   readonly __externref_table_alloc: () => number;
   readonly __wbindgen_export_2: WebAssembly.Table;
-  readonly __wbindgen_malloc: (a: number, b: number) => number;
-  readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
-  readonly __externref_table_dealloc: (a: number) => void;
   readonly __externref_drop_slice: (a: number, b: number) => void;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
+  readonly __wbindgen_malloc: (a: number, b: number) => number;
+  readonly __externref_table_dealloc: (a: number) => void;
+  readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_start: () => void;
 }
 
