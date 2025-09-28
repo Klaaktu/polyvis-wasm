@@ -19,12 +19,6 @@ pub struct Instance {
     counter: u32, // Used for hash map key, not actual count of items!
 }
 
-#[wasm_bindgen]
-pub enum TextFormat {
-    JSON,
-    YAML,
-}
-
 // pub field for wasm-bindgen must implement Copy, or custom getter (e.g. with clone)
 #[wasm_bindgen]
 pub struct PolyAId(pub u32, #[wasm_bindgen(getter_with_clone)] pub Vec<Coord2D>);
@@ -107,11 +101,8 @@ impl Instance {
         PolyAId(self.counter, res)
     }
 
-    pub fn serialize(&self, format: TextFormat) -> Result<String, String> {
-        match format {
-            TextFormat::JSON => serde_json::to_string(self).map_err(|e| e.to_string()),
-            TextFormat::YAML => serde_yaml_ng::to_string(self).map_err(|e| e.to_string()),
-        }
+    pub fn serialize(&self) -> Result<String, String> {
+        serde_json::to_string(self).map_err(|e| e.to_string())
     }
 
     /// Import from a text containing a vector of polygons,
