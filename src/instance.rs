@@ -126,6 +126,13 @@ impl Instance {
         Ok(())
     }
 
+    pub fn dump_to_js(&self) -> Vec<PolyAId> {
+        self.data
+            .iter()
+            .map(|(id, p)| PolyAId(*id, p.exterior().coords().map(|c| (*c).into()).collect()))
+            .collect()
+    }
+
     fn ids_to_polygons(
         &self,
         ids: &Vec<u32>,
