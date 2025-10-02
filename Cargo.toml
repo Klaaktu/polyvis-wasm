@@ -19,3 +19,6 @@ serde_json = "1.0.145"
 
 [target.wasm32-unknown-unknown.dependencies]
 getrandom = { version = "0.3.3", features = ["wasm_js"] }
+
+[profile.release]
+lto = true
