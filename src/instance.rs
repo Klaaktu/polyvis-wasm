@@ -80,15 +80,17 @@ impl Instance {
             .max()
     }
 
-    // Not to be used in IoU
-    // This assumes the intersection is always 1 polygon
+    // Not to be used in IoU: This assumes the intersection of polygons is always 1 polygon
     pub fn intersection(&self, ids: Vec<u32>) -> Result<Vec<Coord2D>, String> {
-        let polygon_data = self.ids_to_polygons(&ids)?;
-        let i = match unary_intersection(polygon_data).iter().next() {
-            Some(p) => p.exterior().coords().map(|c| (*c).into()).collect(),
-            None => vec![],
-        };
-        Ok(i)
+        let inters = unary_intersection(self.ids_to_polygons(&ids)?);
+        debug_assert!(
+            inters.0.len() <= 1,
+            "Intersection resulted in multiple segments!"
+        );
+        match inters.iter().next() {
+            Some(p) => Ok(p.exterior().coords().map(|c| (*c).into()).collect()),
+            None => Ok(vec![]),
+        }
     }
 
     pub fn rand_convex_poly(&mut self, n: usize, up_bound: f64) -> PolyAId {
