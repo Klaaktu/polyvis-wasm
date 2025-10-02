@@ -3,7 +3,7 @@ use geo::{Coord, IsConvex, coord};
 use wasm_bindgen::prelude::*;
 
 // Call this in JS main(). This is like main() for lib.
-// I need global / static hash map. Alternative is once_cell crate.
+// I need global / static hash map. Alternative is LazyLock.
 #[wasm_bindgen]
 pub fn new_session() -> Instance {
     Instance::new()

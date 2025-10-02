@@ -30,6 +30,7 @@ Importing YAML save is not supported, due to [lack](https://github.com/acatton/s
 Further reading: https://kylebarron.dev/blog/geos-wasm (p.s. [GEOS](https://libgeos.org/) says it's a port of JTS, not the other way around.)
 
 ## To do
+- [ ] Use `std::sync::LazyLock` instead of instance?
 - [ ] Use WASM's linear memory in JS?
 - [ ] Import JS functions to Rust to avoid data copy and using structs to pass data.
 - [ ] Multi-threading?
