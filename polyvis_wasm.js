@@ -366,10 +366,12 @@ export class Instance {
     /**
      * @param {number} n
      * @param {number} up_bound
+     * @param {number} x
+     * @param {number} y
      * @returns {PolyAId}
      */
-    rand_convex_poly(n, up_bound) {
-        const ret = wasm.instance_rand_convex_poly(this.__wbg_ptr, n, up_bound);
+    rand_poly_at(n, up_bound, x, y) {
+        const ret = wasm.instance_rand_poly_at(this.__wbg_ptr, n, up_bound, x, y);
         return PolyAId.__wrap(ret);
     }
     /**

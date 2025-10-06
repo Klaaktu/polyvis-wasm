@@ -20,7 +20,7 @@ export class Instance {
   iou(ids: Uint32Array): number;
   polygons_under_coord(c: Coord2D): number | undefined;
   intersection(ids: Uint32Array): Coord2D[];
-  rand_convex_poly(n: number, up_bound: number): PolyAId;
+  rand_poly_at(n: number, up_bound: number, x: number, y: number): PolyAId;
   serialize(): string;
   /**
    * Import from a text containing a vector of polygons,
@@ -54,7 +54,7 @@ export interface InitOutput {
   readonly instance_iou: (a: number, b: number, c: number) => [number, number, number];
   readonly instance_polygons_under_coord: (a: number, b: number) => number;
   readonly instance_intersection: (a: number, b: number, c: number) => [number, number, number, number];
-  readonly instance_rand_convex_poly: (a: number, b: number, c: number) => number;
+  readonly instance_rand_poly_at: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly instance_serialize: (a: number) => [number, number, number, number];
   readonly instance_import_list: (a: number, b: number, c: number) => [number, number];
   readonly instance_dump_to_js: (a: number) => [number, number];
