@@ -1,10 +1,10 @@
 use crate::{
     api::Coord2D,
-    utils::{rand_convex_verts, unary_intersection},
+    utils::{new_oriented_poly, rand_convex_poly, unary_intersection},
 };
 use geo::{
-    Area, BooleanOps, Coord, CoordinatePosition, Intersects, LineString, Orient, Polygon,
-    coordinate_position::CoordPos, orient::Direction::Default, unary_union,
+    Area, BooleanOps, Coord, CoordinatePosition, InteriorPoint, Intersects, Point, Polygon,
+    Translate, coordinate_position::CoordPos, unary_union,
 };
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, vec};
@@ -93,12 +93,14 @@ impl Instance {
         }
     }
 
-    pub fn rand_convex_poly(&mut self, n: usize, up_bound: f64) -> PolyAId {
-        let verts = rand_convex_verts(n, up_bound);
-        let res: Vec<Coord2D> = verts.iter().map(|&e| e.into()).collect();
+    pub fn rand_poly_at(&mut self, n: usize, up_bound: f64, x: f64, y: f64) -> PolyAId {
+        let mut poly = rand_convex_poly(n, up_bound);
+        let center = poly.interior_point().unwrap_or(Point::new(0.0, 0.0));
+        let (x_offset, y_offset) = (Point::new(x, y) - center).x_y();
+        poly.translate_mut(x_offset, y_offset);
+        let res: Vec<Coord2D> = poly.exterior().coords().map(|&e| e.into()).collect();
         self.counter += 1;
-        self.data
-            .insert(self.counter, new_oriented_poly(verts.into()));
+        self.data.insert(self.counter, poly);
         PolyAId(self.counter, res)
     }
 
@@ -168,7 +170,4 @@ fn iou_simple(a: &Polygon, b: &Polygon) -> f64 {
     inter / union
 }
 
-fn new_oriented_poly(line: LineString) -> Polygon {
-    Polygon::new(line, vec![]).orient(Default)
-}
 // Iterator has state, which is why it's usually not shared and some methods take ownership instead of reference.

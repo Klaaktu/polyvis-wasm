@@ -1,5 +1,6 @@
 use crate::Coord2D;
-use geo::{BooleanOps, Coord, LineString, MultiPolygon, Polygon};
+use geo::orient::Direction::Default;
+use geo::{BooleanOps, Coord, LineString, MultiPolygon, Orient, Polygon};
 use rand::{random_range, rng, seq::SliceRandom};
 use std::{
     cmp::max,
@@ -10,6 +11,10 @@ pub fn closed_line(points: Vec<Coord2D>) -> LineString {
     let mut line = LineString::from(points);
     line.close();
     line
+}
+
+pub fn new_oriented_poly(line: LineString) -> Polygon {
+    Polygon::new(line, vec![]).orient(Default)
 }
 
 // pub fn vec_to_convex_poly(points: Vec<Coord2D>) -> Result<Polygon, String> {
@@ -28,20 +33,21 @@ pub fn unary_intersection<'a>(mut polygons: impl Iterator<Item = &'a Polygon>) -
     polygons.fold(intersection, |acc, p| acc.intersection(p))
 }
 
-pub fn rand_convex_verts(n: usize, up_bound: f64) -> Vec<Coord> {
+pub fn rand_convex_poly(n: usize, up_bound: f64) -> Polygon {
     let n = max(n, 3);
     let mut vectors: Vec<Coord> = zip(random_sum_zero(n, up_bound), random_sum_zero(n, up_bound))
         .map(|(a, b)| Coord { x: a, y: b })
         .collect();
     // atan2 range is [-pi,pi], sort in reverse order so the polygon is upright
     vectors.sort_by(|a, b| b.y.atan2(b.x).total_cmp(&a.y.atan2(a.x)));
-    vectors
+    let line = vectors
         .iter()
         .scan(Coord::zero(), |acc, &v| {
             *acc = *acc + v;
             Some(*acc)
         })
-        .collect()
+        .collect();
+    new_oriented_poly(line)
 }
 
 fn random_sum_zero(n: usize, up_bound: f64) -> Vec<f64> {
