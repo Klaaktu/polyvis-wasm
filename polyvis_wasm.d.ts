@@ -65,8 +65,8 @@ export interface InitOutput {
   readonly __wbg_set_coord2d_0: (a: number, b: number) => void;
   readonly __wbg_get_coord2d_1: (a: number) => number;
   readonly __wbg_set_coord2d_1: (a: number, b: number) => void;
-  readonly is_convex: (a: number, b: number) => number;
   readonly coord2d_new: (a: number, b: number) => number;
+  readonly is_convex: (a: number, b: number) => number;
   readonly __wbindgen_exn_store: (a: number) => void;
   readonly __externref_table_alloc: () => number;
   readonly __wbindgen_export_2: WebAssembly.Table;
