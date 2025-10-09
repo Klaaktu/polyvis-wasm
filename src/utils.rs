@@ -1,6 +1,6 @@
 use crate::Coord2D;
 use geo::orient::Direction::Default;
-use geo::{BooleanOps, Coord, LineString, MultiPolygon, Orient, Polygon};
+use geo::{BooleanOps, Coord, CoordsIter, LineString, MultiPolygon, Orient, Polygon};
 use rand::{random_range, rng, seq::SliceRandom};
 use std::{
     cmp::max,
@@ -74,6 +74,14 @@ fn random_sum_zero(n: usize, up_bound: f64) -> Vec<f64> {
     let negative = scan_iter(&nums[n_pos..n - 1], min, max, |prev, x| prev - x);
     let mut res: Vec<f64> = positive.chain(negative).collect();
     res.shuffle(&mut rng());
+    res
+}
+
+// Not returning the last vertex of the polygon, which is the same as the first.
+// No better way, right? Cannot skip last in iter due to nature of iter, cannot return slice due to ownership.
+pub fn poly_to_js_coord(p: &Polygon) -> Vec<Coord2D> {
+    let mut res: Vec<Coord2D> = p.exterior_coords_iter().map(|c| c.into()).collect();
+    res.pop();
     res
 }
 

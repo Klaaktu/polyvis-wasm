@@ -46,3 +46,5 @@ impl Into<Coord2D> for Coord<f64> {
 pub fn is_convex(points: Vec<Coord2D>) -> bool {
     closed_line(points).is_convex()
 }
+
+// Only closed LineString can be convex. https://docs.rs/geo/latest/geo/algorithm/is_convex/trait.IsConvex.html

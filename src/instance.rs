@@ -1,6 +1,6 @@
 use crate::{
     api::Coord2D,
-    utils::{new_oriented_poly, rand_convex_poly, unary_intersection},
+    utils::{new_oriented_poly, poly_to_js_coord, rand_convex_poly, unary_intersection},
 };
 use geo::{
     Area, BooleanOps, Coord, CoordinatePosition, InteriorPoint, Intersects, Point, Polygon,
@@ -88,7 +88,7 @@ impl Instance {
             "Intersection resulted in multiple segments!"
         );
         match inters.iter().next() {
-            Some(p) => Ok(p.exterior().coords().map(|c| (*c).into()).collect()),
+            Some(p) => Ok(poly_to_js_coord(p)),
             None => Ok(vec![]),
         }
     }
@@ -98,7 +98,7 @@ impl Instance {
         let center = poly.interior_point().unwrap_or(Point::new(0.0, 0.0));
         let (x_offset, y_offset) = (Point::new(x, y) - center).x_y();
         poly.translate_mut(x_offset, y_offset);
-        let res: Vec<Coord2D> = poly.exterior().coords().map(|&e| e.into()).collect();
+        let res: Vec<Coord2D> = poly_to_js_coord(&poly);
         self.counter += 1;
         self.data.insert(self.counter, poly);
         PolyAId(self.counter, res)
@@ -129,7 +129,7 @@ impl Instance {
     pub fn dump_to_js(&self) -> Vec<PolyAId> {
         self.data
             .iter()
-            .map(|(id, p)| PolyAId(*id, p.exterior().coords().map(|c| (*c).into()).collect()))
+            .map(|(id, p)| PolyAId(*id, poly_to_js_coord(p)))
             .collect()
     }
 
@@ -169,5 +169,9 @@ fn iou_simple(a: &Polygon, b: &Polygon) -> f64 {
     debug_assert!(union != 0.0, "Union is 0. Division by 0!");
     inter / union
 }
+
+// Be sure to always use crate::utils::{new_oriented_poly, poly_to_js_coord}
+// Union of different windings is subtraction instead.
+// geo::Polygon is closed. I.E. last vert is the same as first, which JS side doesn't need.
 
 // Iterator has state, which is why it's usually not shared and some methods take ownership instead of reference.
