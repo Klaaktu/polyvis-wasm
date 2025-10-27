@@ -17,7 +17,6 @@ export const instance_intersection: (a: number, b: number, c: number) => [number
 export const instance_rand_poly_at: (a: number, b: number, c: number, d: number, e: number) => number;
 export const instance_serialize: (a: number) => [number, number, number, number];
 export const instance_import_list: (a: number, b: number, c: number) => [number, number];
-export const instance_dump_to_js: (a: number) => [number, number];
 export const new_session: () => number;
 export const deserialize_session: (a: number, b: number) => [number, number, number];
 export const __wbg_coord2d_free: (a: number, b: number) => void;
@@ -25,8 +24,8 @@ export const __wbg_get_coord2d_0: (a: number) => number;
 export const __wbg_set_coord2d_0: (a: number, b: number) => void;
 export const __wbg_get_coord2d_1: (a: number) => number;
 export const __wbg_set_coord2d_1: (a: number, b: number) => void;
-export const coord2d_new: (a: number, b: number) => number;
 export const is_convex: (a: number, b: number) => number;
+export const coord2d_new: (a: number, b: number) => number;
 export const __wbindgen_exn_store: (a: number) => void;
 export const __externref_table_alloc: () => number;
 export const __wbindgen_export_2: WebAssembly.Table;

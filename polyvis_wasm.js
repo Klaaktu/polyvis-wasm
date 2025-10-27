@@ -408,15 +408,6 @@ export class Instance {
             throw takeFromExternrefTable0(ret[0]);
         }
     }
-    /**
-     * @returns {PolyAId[]}
-     */
-    dump_to_js() {
-        const ret = wasm.instance_dump_to_js(this.__wbg_ptr);
-        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
-        wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
-        return v1;
-    }
 }
 if (Symbol.dispose) Instance.prototype[Symbol.dispose] = Instance.prototype.free;
 
@@ -527,10 +518,6 @@ function __wbg_get_imports() {
     imports.wbg.__wbg_getRandomValues_3c9c0d586e575a16 = function() { return handleError(function (arg0, arg1) {
         globalThis.crypto.getRandomValues(getArrayU8FromWasm0(arg0, arg1));
     }, arguments) };
-    imports.wbg.__wbg_polyaid_new = function(arg0) {
-        const ret = PolyAId.__wrap(arg0);
-        return ret;
-    };
     imports.wbg.__wbg_wbindgenthrow_451ec1a8469d7eb6 = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
