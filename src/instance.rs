@@ -126,12 +126,13 @@ impl Instance {
         Ok(())
     }
 
-    pub fn dump_to_js(&self) -> Vec<PolyAId> {
-        self.data
-            .iter()
-            .map(|(id, p)| PolyAId(*id, poly_to_js_coord(p)))
-            .collect()
-    }
+    // Not needed anymore. Frontend now preserves its own list.
+    // pub fn dump_to_js(&self) -> Vec<PolyAId> {
+    //     self.data
+    //         .iter()
+    //         .map(|(id, p)| PolyAId(*id, poly_to_js_coord(p)))
+    //         .collect()
+    // }
 
     fn ids_to_polygons(
         &self,
@@ -144,31 +145,31 @@ impl Instance {
     }
 
     // Currently not exported because this feature is not required and I don't want another wrapper struct.
-    fn all_pair_iou(&self) -> Vec<(u32, Vec<(u32, f64)>)> {
-        let kvs: Vec<(&u32, &Polygon)> = self.data.iter().collect();
-        let n = kvs.len();
-        let mut res = vec![];
-        for i in 0..n {
-            let mut intersections = vec![];
-            for j in i + 1..n {
-                if kvs[i].1.intersects(kvs[j].1) {
-                    intersections.push((*kvs[j].0, iou_simple(kvs[i].1, kvs[j].1)))
-                }
-            }
-            if !intersections.is_empty() {
-                res.push((*kvs[i].0, intersections))
-            };
-        }
-        res
-    }
+    // fn all_pair_iou(&self) -> Vec<(u32, Vec<(u32, f64)>)> {
+    //     let kvs: Vec<(&u32, &Polygon)> = self.data.iter().collect();
+    //     let n = kvs.len();
+    //     let mut res = vec![];
+    //     for i in 0..n {
+    //         let mut intersections = vec![];
+    //         for j in i + 1..n {
+    //             if kvs[i].1.intersects(kvs[j].1) {
+    //                 intersections.push((*kvs[j].0, iou_simple(kvs[i].1, kvs[j].1)))
+    //             }
+    //         }
+    //         if !intersections.is_empty() {
+    //             res.push((*kvs[i].0, intersections))
+    //         };
+    //     }
+    //     res
+    // }
 }
 
-fn iou_simple(a: &Polygon, b: &Polygon) -> f64 {
-    let inter = a.intersection(b).unsigned_area();
-    let union = a.union(b).unsigned_area();
-    debug_assert!(union != 0.0, "Union is 0. Division by 0!");
-    inter / union
-}
+// fn iou_simple(a: &Polygon, b: &Polygon) -> f64 {
+//     let inter = a.intersection(b).unsigned_area();
+//     let union = a.union(b).unsigned_area();
+//     debug_assert!(union != 0.0, "Union is 0. Division by 0!");
+//     inter / union
+// }
 
 // Be sure to always use crate::utils::{new_oriented_poly, poly_to_js_coord}
 // Union of different windings is subtraction instead.
